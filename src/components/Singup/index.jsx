@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider,FacebookAuthProvider  } from "firebase/auth";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
-import { FcGoogle } from "react-icons/fc";
+import { BsGoogle } from "react-icons/bs";
+import { FaFacebookF } from "react-icons/fa";
 
 const Signup = () => {
 	const [data, setData] = useState({
@@ -52,6 +53,26 @@ const Signup = () => {
 		});
 	};
 
+	const loginWithFacebook = async () => {
+		const provider = new FacebookAuthProvider();
+		const auth = getAuth();
+		await signInWithPopup(auth, provider)
+		.then((result) => {
+			// This gives you a Google Access Token. You can use it to access the Google API.
+			const credential = GoogleAuthProvider.credentialFromResult(result);
+			// console.log(credential)
+			localStorage.setItem("token", credential.idToken);
+			window.location = "/";
+			// ...
+		}).catch((error) => {
+			// Handle Errors here.
+			const errorMessage = error.message;
+			setError(errorMessage);
+			// The AuthCredential type that was used.
+			const credential = GoogleAuthProvider.credentialFromError(error);
+		});
+	};
+
 	return (
 		<div className={styles.signup_container}>
 			<div className={styles.signup_form_container}>
@@ -62,9 +83,14 @@ const Signup = () => {
 							Sign in
 						</button>
 					</Link>
-					<button type="button" onClick={loginWithGoogle} className={styles.social_btn}>
-							<FcGoogle/>
-					</button>
+					<div className={styles.login_btn}>
+						<button type="button" onClick={loginWithGoogle} className={styles.social_btn}>
+								<BsGoogle/>
+						</button>
+						<button type="button" onClick={loginWithFacebook} className={styles.social_btn}>
+								<FaFacebookF/>
+						</button>
+					</div>
 				</div>
 				<div className={styles.right}>
 					<form className={styles.form_container} onSubmit={handleSubmit}>
