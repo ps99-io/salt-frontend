@@ -57,7 +57,7 @@ const Login = () => {
 		.then((result) => {
 			// This gives you a Google Access Token. You can use it to access the Google API.
 			const credential = FacebookAuthProvider.credentialFromResult(result);
-			// console.log(credential)
+			console.log(credential)
 			localStorage.setItem("token", credential.idToken);
 			window.location = "/";
 			// ...
