@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
 	const [data, setData] = useState({ email: "", password: "" });
@@ -27,6 +29,24 @@ const Login = () => {
 				setError(error.response.data.error);
 			}
 		}
+	};
+	const loginWithGoogle = async () => {
+		const provider = new GoogleAuthProvider();
+		const auth = getAuth();
+		await signInWithPopup(auth, provider)
+		.then((result) => {
+			// This gives you a Google Access Token. You can use it to access the Google API.
+			const credential = GoogleAuthProvider.credentialFromResult(result);
+			localStorage.setItem("token", credential.idToken);
+			window.location = "/";
+			// ...
+		}).catch((error) => {
+			// Handle Errors here.
+			const errorMessage = error.message;
+			setError(errorMessage);
+			// The AuthCredential type that was used.
+			const credential = GoogleAuthProvider.credentialFromError(error);
+		});
 	};
 
 	return (
@@ -66,6 +86,9 @@ const Login = () => {
 							Sign Up
 						</button>
 					</Link>
+					<button type="button" onClick={loginWithGoogle} className={styles.social_btn}>
+							<FcGoogle/>
+					</button>
 				</div>
 			</div>
 		</div>
